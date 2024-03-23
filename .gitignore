@@ -4,3 +4,4 @@ env
 .DS_Store
 pdg2pdf.spec
 build
+dist
