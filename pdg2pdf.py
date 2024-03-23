@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from piexif import remove, load
 import argparse
 import os
 import shutil
@@ -9,7 +8,7 @@ import sys
 import time
 
 import jpg2pdf
-from PIL import Image
+from piexif import remove as rm_exif
 from tqdm import tqdm
 
 
@@ -96,7 +95,7 @@ def del_exif(_jpg_file):
         # image_without_exif.putdata(data)
         # image_without_exif.save(_jpg_file)
         # # The above code would make files larger. 上面的代码会使文件变大
-        remove(_jpg_file)
+        rm_exif(_jpg_file)  # 使用的是 piexif 库的 remove 函数
     except Exception as e:
         print(f"Error: {e}")
         sys.exit(1)
@@ -127,6 +126,23 @@ def cvt_pdg2jpg(_pdg_files, _jpg_folder, _del_exif_flag=True):
         print(f"Error: {e}")
         sys.exit(1)
 
+def _extract_special_pages(_jpg_files, prefix):
+    """Extract special pages from the .jpg files.
+    从 .jpg 文件中提取特殊页面
+
+    :param _jpg_files: list of .jpg files
+    :param prefix: the prefix of the special .jpg files
+    :return spc_list: list of special .jpg files
+    :return _jpg_files: list of remaining .jpg files
+    """
+    spc_list = []
+    for f in _jpg_files:
+        if prefix in f:
+            spc_list.append(f)
+    for f in spc_list:
+        _jpg_files.remove(f)
+    return spc_list, _jpg_files
+
 def reorder_pages(_jpg_files):
     """Reorder the pages of the .jpg files.
     重新排列 .jpg 文件的页面
@@ -134,7 +150,16 @@ def reorder_pages(_jpg_files):
     :param _jpg_files: list of .jpg files
     :return reordered_files: list of reordered .jpg files
     """
-
+    # Extract special pages. 提取特殊页面
+    cov, remain = _extract_special_pages(_jpg_files, "cov")
+    cov_1, cov_other = cov[:1], cov[1:]
+    bok, remain = _extract_special_pages(remain, "bok")
+    leg, remain = _extract_special_pages(remain, "leg")
+    fow, remain = _extract_special_pages(remain, "fow")
+    # Reorder the pages. 重新排列页面
+    # Follow the order: 封面(cov), 书名(bok), 版权页(leg), 前言(fow), 目录和正文, back cover
+    reordered_files = cov_1 + bok + leg + fow + remain + cov_other
+    return reordered_files
 
 def cvt_jpg2pdf(_jpg_folder, _pdf_name):
     """Convert .jpg files to .pdf file.
@@ -149,6 +174,8 @@ def cvt_jpg2pdf(_jpg_folder, _pdf_name):
     if not _jpg_files:
         print(f"Error: no .jpg files found in the folder '{_jpg_folder}'.")
         sys.exit(1)
+    # Reorder the pages. 重新排列页面
+    _jpg_files = reorder_pages(_jpg_files)
 
     # Convert .jpg files to .pdf file. 将 .jpg 文件转换为 .pdf 文件
     with jpg2pdf.create(_pdf_name) as pdf:
