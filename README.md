@@ -22,3 +22,14 @@ Example:
 
 Before running the script, renamimg .pdg files in a sequence is recommended.
 在运行本脚本之前，建议将 .pdg 文件按顺序重命名。
+
+## Requirements
+
+- Python 3.6+
+- jpg2pdf~=0.1.0
+- piexif~=1.1.3
+- tqdm~=4.66.2
+
+## Reference
+
+- [超星图书馆书转化为PDF格式的方法](https://www.360docs.net/doc/b312672264.html)
