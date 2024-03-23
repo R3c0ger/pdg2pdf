@@ -5,7 +5,9 @@ This is a simple CLI script to convert a series of PDG files to a single PDF fil
 
 ## Usage
 
-usage: `pdg2pdf.py [-h] [--path PATH] [--output OUTPUT] [--del_exif]`
+usage: 
+- `pdg2pdf.py [-h] [--path PATH] [--output OUTPUT] [--del_exif]`
+- `pdg2pdf.exe [-h] [--path PATH] [--output OUTPUT] [--del_exif]`
 
 optional arguments:
 
@@ -18,7 +20,8 @@ optional arguments:
 
 Example: 
 
-`python pdg2pdf.py -p "C:/Users/xxx/Desktop/book" -o "book.pdf" -d`
+- `python pdg2pdf.py -p "C:/Users/xxx/Desktop/book" -o "book.pdf" -d`
+- `pdg2pdf.exe -p "C:/Users/xxx/Desktop/book" -o "book.pdf" -d`
 
 Before running the script, renamimg .pdg files in a sequence is recommended.
 在运行本脚本之前，建议将 .pdg 文件按顺序重命名。
